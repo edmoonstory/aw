@@ -1,0 +1,101 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8">
+  <title>note</title>
+  <style>
+    body {
+      background-color: black;
+      color: #ffffff;
+      font-family: 'Courier New', Courier, monospace;
+      padding: 20px;
+      margin: 0;
+      height: 100vh;
+      user-select: none;
+      cursor: pointer;
+    }
+
+    .container {
+      margin: auto;
+      white-space: pre-wrap;
+      font-size: 35px;
+    }
+
+    .line {
+      margin: 10px 0;
+    }
+
+    #cursor {
+      display: inline-block;
+      width: 10px;
+      animation: blink 1s infinite;
+    }
+
+    @keyframes blink {
+      0%, 50% { background-color: lime; }
+      50.01%, 100% { background-color: transparent; }
+    }
+  </style>
+</head>
+<body onclick="showNextLine()">
+
+  <!-- Pemutar musik otomatis -->
+  <audio id="bg-music" autoplay loop hidden>
+    <source src="music.mp3" type="audio/mpeg">
+    Browser Anda tidak mendukung pemutar audio.
+  </audio>
+
+  <div class="container" id="terminal"></div>
+
+  <script>
+    const lines = [
+      "hai err.." ,
+      "Pada suatu hari yang tenang di sebuah taman kota, aku bertemu dengan seseorang yang berbeda dari biasanya. Tatapannya hangat, dan senyumnya mampu membuat dunia seolah melambat. Di penghujung sore, sebelum kami berpisah, ia berkata dengan nada lembut, -Suatu hari nanti, mari kita lihat bulan bersama.-",
+      "Sejak hari itu, aku menantikan malam yang sempurna. Bulan purnama berikutnya terasa seperti janji yang menggantung di langit. Setiap malam aku mendongak, membayangkan ia juga melihat bulan yang sama dari tempatnya. Kami bertukar pesan, saling menghitung hari, menyusun rencana sederhana—hanya duduk berdua, diam-diam, memandangi bulan.-",
+      "Namun waktu berjalan dengan cara yang aneh. Kesibukan datang, jarak terasa lebih jauh dari yang kupikir. Pesan-pesan mulai jarang, dan suara yang dulu akrab kini hanya tinggal gema. Malam yang kami janjikan itu... tak pernah tiba. Bulan datang dan pergi, tetap bersinar, tapi aku menatapnya seorang diri.-" , 
+      "Akhirnya aku mengerti—ada janji yang memang hanya dibuat untuk dikenang, bukan untuk ditepati. Ia tidak datang, dan mungkin memang tidak akan pernah. Tapi dalam setiap purnama, aku masih melihat ke langit, bukan untuk menunggunya, tapi untuk mengenang hari ketika sebuah janji sederhana terasa begitu indah.-" ,
+      "see u.." ,
+    ];
+
+    let currentLine = 0;
+    let isTyping = false;
+
+    function showNextLine() {
+      // Putar musik saat klik pertama (jaga-jaga kalau autoplay diblok)
+      const music = document.getElementById("bg-music");
+      if (music.paused) music.play();
+
+      if (isTyping || currentLine >= lines.length) return;
+
+      const terminal = document.getElementById("terminal");
+      const newLine = document.createElement("div");
+      newLine.className = "line";
+      terminal.appendChild(newLine);
+
+      typeText(lines[currentLine], newLine, () => {
+        currentLine++;
+        isTyping = false;
+      });
+    }
+
+    function typeText(text, element, callback) {
+      let i = 0;
+      isTyping = true;
+      const cursor = document.createElement("span");
+      cursor.id = "cursor";
+      element.appendChild(cursor);
+
+      const typer = setInterval(() => {
+        if (i < text.length) {
+          cursor.insertAdjacentText("beforebegin", text.charAt(i));
+          i++;
+        } else {
+          clearInterval(typer);
+          cursor.remove();
+          callback();
+        }
+      }, 30); // kecepatan ketik (ms)
+    }
+  </script>
+</body>
+</html>
